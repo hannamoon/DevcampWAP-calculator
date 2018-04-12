@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=0, minimum-scale=1.0, maximum-scale=1.0">
+<title>Calulator</title>
+<style type="text/css">
+	html{margin:0;padding:0;height:100%}
+	body{margin:0;padding:0;height: 100%}
+	html, body, div, p, h1, h2, h3, h4, h5, h6, span, em, strong, input, button, textarea, ul, ol, li, dl, dd, table {font-family: Helvetica Neue, Helvetica, sans-serif; font-weight: normal; word-break: break-all;}
+	button, input {-webkit-appearance: none; outline: none}
+	.wrap{padding-top: 15%}
+	.calc-wrap{width: 280px;padding: 30px;margin:0 auto;border:1px solid #eee; vertical-align: middle}
+	.calc-calculus{min-height:24px;font-size: 16px;color:#999;line-height: 1.4;text-align: right}
+	.calc-form-input {width: 100%;border:0;border-bottom: 1px solid #bbb;font-size: 24px;line-height:1.5;text-align:right;-webkit-appearance: none}
+	.calc-form-input::-webkit-inner-spin-button,
+	.calc-form-input::-webkit-outer-spin-button {-webkit-appearance: none;margin: 0;}
+	.calc-result {padding-top: 7px;min-height: 30px;font-size: 18px; color:#666; line-height:1.4;text-align:right}
+	.calc-btns-wrap {padding-top: 10px}
+	.calc-btns-wrap:after {display: table; clear:both;content: ''}
+	.calc-btn-default {float:left;width: 30%;margin-right:8px;height:35px;border: 1px solid #aaa;font-size: 20px;color:#777;line-height:30px;vertical-align:top}
+	.calc-btn-primary {float:right; margin: 0;background-color: #aaa;color: #fff;font-weight: bold;}
+</style>
+</head>
+<body>
+<div id="wrap" class="wrap">
+	<div class="calc-wrap">
+		<div class="calc-input">
+			<div id="calculus" class="calc-calculus"></div>
+			<input id="numInput" type="number" class="calc-form-input" autofocus>
+			<div id="calcResult" class="calc-result"></div>
+		</div>
+		<div class="calc-btns-wrap">
+			<button id="btnPlus" type="button" class="calc-btn-default">+</button>
+			<button id="btnMinus" type="button" class="calc-btn-default">-</button>
+			<button id="btnCalculate" type="button" class="calc-btn-default calc-btn-primary">=</button>
+		</div>
+	</div>
+</div>
+<script type="text/javascript">
+	var calculus = '';
+	var operator = '+';
+	var prevNum = '';
+	var inputNum = '';
+	var check = 1;
+	var opCheck = 1;
+	var endCheck = 0;
+	var sum = new Number();
+
+	function setNum(op) {
+	  if (check && document.getElementById('numInput').value) {
+	    inputNum = parseFloat(document.getElementById('numInput').value);
+    } else {
+	    inputNum = 0;
+	  }
+
+	  calc(operator);
+
+    if (op != '=') {
+     setOp(op);
+    }
+    printResult();
+	}
+
+	function calc(op) {
+    if (op == '+') {
+      sum = parseFloat(sum + inputNum);
+    } else if (op == '-') {
+      sum = parseFloat(sum - inputNum);
+    }
+    calculus = calculus + ' ' + inputNum;
+  }
+
+	function setOp(op) {
+    operator = op;
+    calculus = calculus + ' ' + operator;
+    prevNum = inputNum;
+    inputNum = '';
+  }
+
+	function resetOp(op) {
+    operator = op;
+    calculus = calculus.slice(0, calculus.lastIndexOf(' ')) + ' ' + operator;
+    inputNum = '';
+  }
+
+  function printResult() {
+    document.getElementById('calculus').innerHTML = calculus;
+    document.getElementById('calcResult').innerHTML = ' = ' + sum;
+  }
+
+  function reset() {
+    calculus = '';
+    operator = '+';
+    prevNum = '';
+    inputNum = '';
+    sum = new Number();
+  }
+	document.getElementById('numInput').addEventListener('keyup', function(){
+	  check = 1;
+	  opCheck = 0;
+	});
+
+	document.getElementById('btnPlus').addEventListener('click', function () {
+	  if (check && !endCheck && !opCheck) {
+			setNum('+');
+			check = 0;
+			endCheck = 0;
+	  } else if(!check && !opCheck) {
+      setOp('+');
+      printResult();
+      endCheck = 0;
+    } else if(!check && opCheck) {
+      resetOp('+');
+      printResult();
+      endCheck = 0;
+    } else if(check && endCheck) {
+      reset();
+      setNum('+');
+      check = 0;
+      endCheck = 0;
+    }
+    opCheck = 1;
+	  document.getElementById('numInput').select();
+  });
+	document.getElementById('btnMinus').addEventListener('click', function () {
+    if (check && !endCheck && !opCheck) {
+      setNum('-');
+      check = 0;
+      endCheck = 0;
+    } else if(!check && !opCheck) {
+      setOp('-');
+      printResult();
+      endCheck = 0;
+		} else if(!check && opCheck) {
+      resetOp('-');
+      printResult();
+      endCheck = 0;
+    } else if(check && endCheck) {
+      reset();
+      setNum('-');
+      check = 0;
+      endCheck = 0;
+    }
+		opCheck = 1;
+    document.getElementById('numInput').select();
+  });
+  document.getElementById('btnCalculate').addEventListener('click', function () {
+		if(check && !endCheck && calculus) {
+		  setNum('=');
+		  check = 0;
+			opCheck = 0;
+      endCheck = 1;
+		}
+    document.getElementById('numInput').select();
+  });
+</script>
+</body>
+</html>
